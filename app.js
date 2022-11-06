@@ -12,6 +12,11 @@ const xss = require('xss');
 // Basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset
 const rateLimiter = require('express-rate-limit');
 
+// Swagger
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 // Middleware
 const authenticateUser = require('./middleware/authentication');
 
@@ -40,6 +45,11 @@ app.use(helmet());
 app.use(cors());
 app.use(xss());
 
+app.get('/', (req, res) => {
+	res.send('<h1>jobs API</h1><a href="/api-docs">API Documentation 🤓</a>');
+});
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // routes
 app.use('/api/v1/auth', authRouter);
 // authenticateUser = middleware we use for authenticating users before we let proceed to the jobs routes
